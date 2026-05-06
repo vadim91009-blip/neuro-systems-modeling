@@ -1,1 +1,338 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Нейросетевое моделирование сложных систем</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            background-color: #000000;
+            background-image: radial-gradient(circle at 10% 20%, rgba(20, 30, 50, 0.3) 0%, #000 90%);
+            color: #e0e0e0;
+            font-family: 'Segoe UI', 'Inter', 'Poppins', system-ui, -apple-system, 'Montserrat', sans-serif;
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        /* плавный скролл */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* кастомный скролл */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2a6fdb;
+            border-radius: 10px;
+        }
+
+        /* общие стили */
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 5%;
+        }
+
+        section {
+            padding: 100px 0;
+            border-bottom: 1px solid rgba(80, 150, 255, 0.15);
+        }
+
+        /* ===== АНИМАЦИИ ПРИ ПОЯВЛЕНИИ ===== */
+        @keyframes fadeUp {
+            0% {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes glowPulse {
+            0% {
+                text-shadow: 0 0 5px rgba(0, 200, 255, 0.3);
+                border-color: rgba(0, 200, 255, 0.3);
+            }
+            100% {
+                text-shadow: 0 0 18px rgba(0, 200, 255, 0.7);
+                border-color: rgba(0, 200, 255, 0.8);
+            }
+        }
+
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s cubic-bezier(0.2, 0.9, 0.4, 1.1), transform 0.8s ease;
+        }
+
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* заголовки с "выделенностью" */
+        h1, h2, h3 {
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+
+        h1 {
+            font-size: clamp(2.8rem, 8vw, 5rem);
+            background: linear-gradient(135deg, #ffffff, #7ab3ff, #3c8aff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        h2 {
+            font-size: clamp(2rem, 5vw, 2.8rem);
+            margin-bottom: 2rem;
+            border-left: 5px solid #2a6fdb;
+            padding-left: 20px;
+        }
+
+        .glow-text {
+            animation: glowPulse 2s infinite alternate;
+        }
+
+        /* карточки / сетка */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .card {
+            background: rgba(15, 20, 30, 0.6);
+            backdrop-filter: blur(4px);
+            border-radius: 28px;
+            padding: 1.8rem;
+            border: 1px solid rgba(60, 100, 200, 0.3);
+            transition: all 0.4s ease;
+            box-shadow: 0 10px 25px -10px rgba(0,0,0,0.5);
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: #3c8aff;
+            box-shadow: 0 20px 35px -12px #1e3a8a40;
+            background: rgba(20, 30, 50, 0.75);
+        }
+
+        .card h3 {
+            font-size: 1.7rem;
+            margin-bottom: 0.8rem;
+            color: #b8d0ff;
+        }
+
+        /* кнопки с анимацией */
+        .btn {
+            display: inline-block;
+            background: transparent;
+            border: 2px solid #3c8aff;
+            color: #d0e2ff;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: 0.3s;
+            margin-top: 1rem;
+            backdrop-filter: blur(5px);
+        }
+
+        .btn:hover {
+            background: #3c8aff;
+            color: #000;
+            box-shadow: 0 0 20px #3c8aff;
+            transform: scale(1.02);
+        }
+
+        /* ховер для ссылок */
+        a {
+            color: #7ab3ff;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+        a:hover {
+            color: white;
+            text-shadow: 0 0 5px #7ab3ff;
+        }
+
+        /* футер */
+        footer {
+            text-align: center;
+            padding: 45px 0;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        /* анимация частиц / сияние (просто шапка) */
+        .hero {
+            text-align: center;
+            padding: 140px 0 120px;
+            position: relative;
+        }
+
+        .badge {
+            background: #1e2a47;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-bottom: 20px;
+            border: 1px solid #3c8aff;
+        }
+
+        @media (max-width: 700px) {
+            section { padding: 60px 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Hero-блок с плавной анимацией при загрузке -->
+        <div class="hero animate-on-scroll visible">
+            <div class="badge">⚡ нейросетевое моделирование</div>
+            <h1>Сложные системы<br>под контролем ИИ</h1>
+            <p style="font-size: 1.2rem; max-width: 700px; margin: 0 auto 2rem auto; opacity: 0.9;">
+                Прогнозирование хаоса, оптимизация, анализ «чёрных ящиков» — обучаемые модели для реальных сложных структур.
+            </p>
+            <a href="#models" class="btn" style="margin-right: 15px;">✨ Исследовать модели</a>
+            <a href="#github" class="btn">🐙 GitHub проект</a>
+        </div>
+
+        <!-- Секция: Что такое -->
+        <section id="about">
+            <div class="animate-on-scroll">
+                <h2>🧠 Нейросети × Сложные системы</h2>
+                <p style="font-size: 1.2rem; max-width: 800px;">
+                    Отклик сети, эмерджентность, фазовые переходы — нейросети позволяют обучаться на данных и предсказывать поведение систем, которые невозможно описать аналитически.
+                </p>
+            </div>
+            <div class="grid-2" style="margin-top: 3rem;">
+                <div class="card animate-on-scroll">
+                    <h3>🌊 Динамический хаос</h3>
+                    <p>LSTM, Transformers для временных рядов. Прогноз аттрактора Лоренца, погоды, популяций.</p>
+                </div>
+                <div class="card animate-on-scroll">
+                    <h3>🕸️ Графовые сети</h3>
+                    <p>GNN для моделирования соцструктур, транспортных потоков, биологических путей.</p>
+                </div>
+                <div class="card animate-on-scroll">
+                    <h3>⚡ Агентное моделирование</h3>
+                    <p>Обучение с подкреплением для эмерджентного поведения в системах «много агентов».</p>
+                </div>
+                <div class="card animate-on-scroll">
+                    <h3>📈 Регрессия и прогноз</h3>
+                    <p>Deep Learning для нелинейных систем, нейро-дифференциальные уравнения (Neural ODE).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Секция: Моделирование сложных систем -->
+        <section id="models">
+            <div class="animate-on-scroll">
+                <h2>🔮 Примеры моделирования</h2>
+                <p>Каждый пример — нейросеть, обученная на данных реальной или синтетической сложной системы.</p>
+            </div>
+            <div class="grid-2">
+                <div class="card animate-on-scroll">
+                    <h3>🌀 Система Лоренца</h3>
+                    <p>Рекуррентная нейросеть предсказывает траекторию «странного аттрактора» на 20 шагов вперёд. MAE < 0.08.</p>
+                    <a href="#" class="btn" style="margin-top: 20px; padding: 8px 20px;">🔬 Демо (гифка)</a>
+                </div>
+                <div class="card animate-on-scroll">
+                    <h3>🏭 Энергосеть</h3>
+                    <p>Графовая нейросеть детектирует аномалии в нагрузке и предлагает оптимальное распределение ресурсов.</p>
+                    <a href="#" class="btn" style="margin-top: 20px; padding: 8px 20px;">📊 Визуализация</a>
+                </div>
+                <div class="card animate-on-scroll">
+                    <h3>🦠 Эпидемиология SIR+NN</h3>
+                    <p>Гибридная модель (SIR + нейросетевой корректор) для прогноза вспышек заболеваний.</p>
+                    <a href="#" class="btn" style="margin-top: 20px; padding: 8px 20px;">📈 Графики</a>
+                </div>
+                <div class="card animate-on-scroll">
+                    <h3>🧬 Генетические сети</h3>
+                    <p>Глубокое обучение для моделирования регуляции генов — скрытые взаимодействия.</p>
+                    <a href="#" class="btn" style="margin-top: 20px; padding: 8px 20px;">🧬 Подробнее</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- GitHub секция — как всё завернуть -->
+        <section id="github">
+            <div class="animate-on-scroll">
+                <h2>🐙 Как запустить проект через GitHub</h2>
+                <p style="font-size: 1.2rem;">Всё работает через страницу на GitHub Pages — ты просто копируешь репозиторий или форкаешь.</p>
+            </div>
+            <div class="grid-2">
+                <div class="card animate-on-scroll">
+                    <h3>📦 1. Создай репозиторий</h3>
+                    <p>Название: <code style="background:#111; padding:3px 6px;">neuro-systems-modeling</code>. Загрузи туда <strong>index.html</strong> и папку с ассетами (если есть).</p>
+                </div>
+                <div class="card animate-on-scroll">
+                    <h3>⚙️ 2. Включи GitHub Pages</h3>
+                    <p>Settings → Pages → Branch: <strong>main</strong> → Save. Через 1 минуту сайт уже живёт по ссылке:<br>
+                    <code>https://твой-ник.github.io/neuro-systems-modeling/</code></p>
+                </div>
+                <div class="card animate-on-scroll">
+                    <h3>💨 3. Автодеплой (опционально)</h3>
+                    <p>Создай файл <code>.github/workflows/deploy.yml</code> — и каждый пуш обновляет сайт автоматически.</p>
+                    <a href="https://docs.github.com/ru/pages" target="_blank" class="btn">📘 Гайд Pages</a>
+                </div>
+                <div class="card animate-on-scroll">
+                    <h3>🚀 4. Доработки с анимацией</h3>
+                    <p>CSS анимации уже встроены, при скролле карточки выезжают, кнопки светятся. Можно добавить Three.js для 3D.</p>
+                    <a href="#" class="btn">✨ Живой пример анимаций</a>
+                </div>
+            </div>
+            <div class="animate-on-scroll" style="margin-top: 50px; text-align: center; background: #0b0f1a; padding: 25px; border-radius: 40px;">
+                <p style="font-size: 1.2rem;">⭐ <strong>Готовый шаблон проектной работы</strong> — просто замени текст, добавь свои скриншоты моделей и графиков.</p>
+                <a href="#" class="btn" style="background: #1a2a49;">🔁 Смотреть код на GitHub →</a>
+            </div>
+        </section>
+
+        <footer>
+            <p>🖤 Нейросетевое моделирование сложных систем · проектная работа · всё работает на чистом HTML/CSS/JS</p>
+            <p style="margin-top: 12px;">✨ <strong>плавные анимации при скролле</strong> + чёрный фон + техно-акценты</p>
+        </footer>
+    </div>
+
+    <script>
+        // Intersection Observer для плавного появления блоков
+        const animatedElements = document.querySelectorAll('.animate-on-scroll');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    // можно продолжать наблюдать (если нужно повторно — раскомментить)
+                    // observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15, rootMargin: "0px 0px -30px 0px" });
+
+        animatedElements.forEach(el => observer.observe(el));
+
+        // добавим небольшую динамику на карточки: bg эффект при наведении на секцию (гламур)
+        console.log("🔥 Сайт по нейросетевому моделированию загружен — чёрный фон, плавные анимации");
+    </script>
+</body>
+</html>
